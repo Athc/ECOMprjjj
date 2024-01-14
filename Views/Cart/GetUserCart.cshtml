@@ -1,0 +1,70 @@
+﻿@model ShoppingCart
+@{
+    ViewData["Title"] = "My Cart";
+}
+
+<div class="container mt-4">
+    @if (Model != null && Model.CartDetails != null && Model.CartDetails.Count > 0)
+    {
+        <h2>My Cart</h2>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Product</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Unit Price ($)</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Total Price ($)</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CartDetails)
+                    {
+                        <tr>
+                            <td>@item.Product.ProductName</td>
+                            <td>
+                                @if (string.IsNullOrEmpty(item.Product.Image))
+                                {
+                                    <img src="/images/NoImage.png" class="img-thumbnail" />
+                                }
+                                else
+                                {
+                                    <img src="/images/@item.Product.Image" class="img-thumbnail" />
+                                }
+                            </td>
+                            <td>@(item.Product.Category?.CategoryName ?? "N/A")</td>
+                            <td>$@item.Product.Price</td>
+                            <td>@item.Quantity</td>
+                            <td>$@(item.Product.Price * item.Quantity)</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-outline-info" href="/Cart/AddItem?productId=@item.ProductId&&redirect=1">+</a>
+                                    <a class="btn btn-outline-info" href="/cart/removeitem?productId=@item.ProductId">-</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="my-3">
+            <h4>Total ($): </h4>
+            <h2 class="text-primary">$@(Model.CartDetails.Select(item => item.Product.Price * item.Quantity).Sum())</h2>
+        </div>
+
+        <div class="my-3">
+            <a class="btn btn-success btn-lg" href="/Cart/Checkout">Proceed to Checkout</a>
+        </div>
+    }
+    else
+    {
+        <div class="text-center">
+            <h2>Your Cart is Empty</h2>
+        </div>
+    }
+</div>
